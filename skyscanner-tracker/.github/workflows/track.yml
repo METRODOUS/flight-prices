@@ -1,0 +1,58 @@
+name: Συλλογή τιμών & πρόβλεψη
+
+on:
+  schedule:
+    # Κάθε 6 ώρες (ώρες UTC → 06:17, 12:17, 18:17, 00:17 ώρα Ελλάδας το καλοκαίρι, μία ώρα νωρίτερα τον χειμώνα)
+    - cron: "17 3,9,15,21 * * *"
+  workflow_dispatch: {}   # κουμπί «Run workflow» για χειροκίνητη εκτέλεση
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: price-tracker
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Εγκατάσταση
+        run: pip install -r requirements.txt
+
+      - name: Συλλογή από Skyscanner + μοντέλο
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python -m tracker.run
+
+      - name: Αποθήκευση ιστορικού στο repo
+        run: |
+          git config user.name "price-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs/data
+          if ! git diff --cached --quiet; then
+            git commit -m "Τιμές $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase --autostash
+            git push
+          fi
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deploy
+        uses: actions/deploy-pages@v4

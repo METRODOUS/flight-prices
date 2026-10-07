@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Τιμές Πτήσεων Κρήτης</title>
+  <meta name="description" content="Ιστορικό και πρόβλεψη τιμών Skyscanner για Χανιά ⇄ Αθήνα">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232a78d6'/%3E%3Cpath d='M6 21l7-3 4-9 2 1-2 7 7-2 2 2-14 6z' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="demo-banner" class="banner" hidden>
+    Προσομοιωμένα δεδομένα (demo) — όχι πραγματικές τιμές. <a href="./">Πήγαινε στα πραγματικά</a>
+  </div>
+
+  <header class="top">
+    <div class="title">
+      <h1>Τιμές πτήσεων</h1>
+      <p id="status-line" class="muted">Φόρτωση…</p>
+    </div>
+    <button id="theme-btn" class="ghost" type="button" aria-label="Αλλαγή θέματος" title="Φωτεινό / σκοτεινό">☀︎ / ☾</button>
+  </header>
+
+  <nav class="filters" aria-label="Φίλτρα">
+    <div class="seg" role="radiogroup" aria-label="Διαδρομή" id="route-seg"></div>
+    <div class="seg" role="radiogroup" aria-label="Βήμα πρόβλεψης" id="gran-seg"></div>
+    <div class="seg" role="radiogroup" aria-label="Χρονικό εύρος" id="when-seg"></div>
+  </nav>
+
+  <section id="ai-card" class="ai-card" aria-label="AI ανάλυση"></section>
+
+  <section aria-label="Ημερομηνίες">
+    <div id="date-strip" class="date-strip"></div>
+  </section>
+
+  <main class="layout">
+    <section class="col-list" aria-label="Πτήσεις">
+      <h2 id="list-title" class="section-title">Πτήσεις</h2>
+      <p id="day-note" class="day-note" hidden></p>
+      <div id="flight-list" class="flight-list"></div>
+    </section>
+    <section class="col-detail" id="detail" aria-label="Λεπτομέρειες πτήσης"></section>
+  </main>
+
+  <section class="model-card" id="model-card" aria-label="Πώς γίνεται η πρόβλεψη"></section>
+
+  <footer class="muted foot">
+    Πηγή: Skyscanner (μέσω Apify), ενημέρωση κάθε 6 ώρες. Οι προβλέψεις είναι στατιστικές εκτιμήσεις, όχι εγγύηση.
+  </footer>
+
+  <div id="tooltip" class="tooltip" role="status" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>

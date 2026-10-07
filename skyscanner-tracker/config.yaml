@@ -1,0 +1,43 @@
+# Ρυθμίσεις του Skyscanner Price Tracker
+# Αλλάζεις εδώ διαδρομές / εύρος ημερών χωρίς να πειράξεις κώδικα.
+
+routes:
+  - origin: CHQ        # Χανιά
+    destination: ATH   # Αθήνα
+  - origin: ATH
+    destination: CHQ
+
+days_ahead: 10          # πόσες μέρες μπροστά παρακολουθούνται (σήμερα + 10)
+nonstop_only: true      # μόνο απευθείας πτήσεις
+adults: 1
+cabin_class: economy
+
+skyscanner:
+  market: GR
+  currency: EUR
+  locale: en-GB
+  host: https://www.skyscanner.net
+
+apify:
+  # Apify actor που διαβάζει τα αποτελέσματα του Skyscanner.
+  # Το token μπαίνει ως GitHub secret APIFY_TOKEN, ΠΟΤΕ εδώ.
+  actor: memo23/skyscanner-scraper
+  max_charge_usd_per_run: 0.60   # όριο κόστους ανά συλλογή (ασφάλεια)
+  timeout_minutes: 15
+
+model:
+  # Ελάχιστο κατώφλι για να θεωρείται «πτώση» τιμής: max(ευρώ, ποσοστό)
+  drop_threshold_eur: 3
+  drop_threshold_pct: 0.03
+  # Το ML μοντέλο ενεργοποιείται μόνο όταν υπάρχουν αρκετά δεδομένα
+  # ΚΑΙ νικά τις απλές μεθόδους στο backtest.
+  min_pairs_for_ml: 1500
+  min_days_for_ml: 7
+  keep_departed_days: 30   # πόσες μέρες κρατάει στο dashboard πτήσεις που έχουν φύγει
+
+ai:
+  # AI αναλυτής (Claude) που γράφει ανάλυση στα ελληνικά σε κάθε συλλογή.
+  # Χρειάζεται GitHub secret ANTHROPIC_API_KEY· χωρίς αυτό γίνεται αυτόματη σύνοψη με κανόνες.
+  enabled: true
+  model: claude-sonnet-5-5        # ή claude-haiku-4-5-20251001 για ~μισό κόστος
+  max_output_tokens: 12000
